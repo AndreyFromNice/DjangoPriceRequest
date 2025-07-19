@@ -1,0 +1,11 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Добро пожаловать в приложение Django Price Request!</h2>
+        <p>Здесь вы можете загружать и обрабатывать Excel файлы.</p>
+        <p>Используйте меню выше, чтобы перейти к <a href="{% url 'upload_excel' %}">странице загрузки</a>.</p>
+    </div>
+{% endblock %}

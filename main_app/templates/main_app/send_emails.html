@@ -1,0 +1,62 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Отправка писем{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Отправка коммерческих предложений</h2>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# Теперь используем переменные, которые передаются из views.py: docx_ready и csv_ready #}
+    {# Важно: если docx_ready = True, то это подразумевает, что Excel уже был обработан. #}
+    {# Поэтому отдельная проверка processed_excel_available может быть опущена или #}
+    {# считаться True, если docx_ready True. #}
+
+    {% if not docx_ready %} {# Проверяем, что DOCX готов #}
+        <div class="alert alert-warning" role="alert">
+            Пожалуйста, сначала <a href="{% url 'upload_excel' %}">загрузите и обработайте Excel файл и сгенерируйте DOCX письмо</a>.
+        </div>
+    {% elif not csv_ready %} {# Если DOCX готов, но CSV нет #}
+        <div class="alert alert-warning" role="alert">
+            Пожалуйста, <a href="{% url 'upload_excel' %}">загрузите CSV файл со списком рассылки</a>.
+        </div>
+    {% else %} {# Если и DOCX, и CSV готовы #}
+        <p class="lead">
+            Готовы отправить письма? Введите данные для вашего SMTP-сервера REG.RU.
+        </p>
+        <p>
+            Письма будут отправлены с прикрепленным сгенерированным Word-документом ({{ display_docx_filename }})
+            {% if last_processed_excel_path %} {# Проверяем наличие пути к Excel #}
+            и отфильтрованным Excel-файлом ({{ display_excel_filename }})
+            {% else %}
+            без Excel вложения.
+            {% endif %}
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            {{ smtp_form.as_p }}
+            <button type="submit" class="btn btn-primary">Начать рассылку</button>
+        </form>
+
+        {% if results %}
+        <h3 class="mt-5">Результаты рассылки:</h3>
+        <ul class="list-group">
+            <li class="list-group-item">Успешно отправлено: <span class="badge bg-success rounded-pill">{{ results.total_sent }}</span></li>
+            <li class="list-group-item">Ошибки отправки: <span class="badge bg-danger rounded-pill">{{ results.total_failed }}</span></li>
+            <li class="list-group-item">Пропущено (нет email): <span class="badge bg-warning rounded-pill">{{ results.total_skipped }}</span></li>
+            <li class="list-group-item">Всего обработано записей: <span class="badge bg-info rounded-pill">{{ results.total_processed }}</span></li>
+        </ul>
+        {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}

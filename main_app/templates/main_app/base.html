@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django Price Request{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="{% url 'home' %}" class="site-logo">Рассылка КП</a>
+                <nav>
+                    <ul class="main-nav-list">
+                        <li><a href="{% url 'home' %}">Главная</a></li>
+                        <li><a href="{% url 'upload_excel' %}">Загрузка и Генерация</a></li>
+                        <li><a href="{% url 'send_emails' %}">Отправка Писем</a></li>
+                        <li><a href="{% url 'admin:index' %}">Админ</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Price Request.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
